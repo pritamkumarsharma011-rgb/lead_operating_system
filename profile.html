@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropertyVista | User Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.styles.css">
+    <style>
+        .page-header { padding:24px 40px 0; display:flex; align-items:center; gap:16px; }
+        .page-header h1 { font-size:20px; font-weight:700; letter-spacing:-0.3px; color:var(--text-primary); }
+
+        .profile-header {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            padding:28px;
+            margin-bottom:20px;
+            display:flex;
+            align-items:flex-start;
+            gap:20px;
+        }
+        .profile-avatar {
+            width:72px;
+            height:72px;
+            border-radius:50%;
+            background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+            box-shadow:0 4px 12px rgba(37,99,235,0.25);
+        }
+        .profile-avatar svg { width:36px; height:36px; fill:white; }
+        .profile-info { flex:1; min-width:0; }
+        .profile-name { font-size:22px; font-weight:700; color:var(--text-primary); margin-bottom:2px; }
+        .profile-phone-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+        .profile-phone { font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--text-secondary); background:var(--surface-hover); padding:3px 10px; border-radius:var(--radius-xs); }
+        .profile-meta { display:flex; gap:20px; font-size:12px; color:var(--text-muted); flex-wrap:wrap; }
+        .profile-meta span { display:inline-flex; align-items:center; gap:5px; }
+        .profile-meta svg { width:13px; height:13px; flex-shrink:0; }
+
+        .quick-actions { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+
+        .stats-row {
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:14px;
+            margin-bottom:24px;
+        }
+        .stat-card {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            padding:16px;
+            text-align:center;
+        }
+        .stat-value { font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; color:var(--text-primary); line-height:1; margin-bottom:4px; }
+        .stat-label { font-size:11px; color:var(--text-muted); font-weight:500; text-transform:uppercase; letter-spacing:0.5px; }
+
+        .leads-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));
+            gap:14px;
+            margin-bottom:28px;
+        }
+        .lead-card {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            padding:20px;
+            transition:all .2s ease;
+        }
+        .lead-card:hover { box-shadow:var(--shadow-md); border-color:transparent; }
+        .lead-card-header {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:14px;
+            gap:8px;
+        }
+        .lead-type-badge {
+            display:inline-flex;
+            align-items:center;
+            gap:5px;
+            padding:3px 9px;
+            border-radius:20px;
+            font-size:11px;
+            font-weight:600;
+            text-transform:uppercase;
+            letter-spacing:0.3px;
+        }
+        .lead-type-badge.rent { background:var(--rent-bg); color:var(--rent); }
+        .lead-type-badge.buy { background:var(--buy-bg); color:var(--buy); }
+        .lead-type-badge.sell { background:var(--sell-bg); color:var(--sell); }
+        .lead-details { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .detail-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.8px; color:var(--text-muted); margin-bottom:2px; }
+        .detail-value { font-size:13px; color:var(--text-primary); font-weight:500; }
+        .detail-value.mono { font-family:'JetBrains Mono',monospace; font-size:12px; }
+        .detail-value.empty { color:var(--text-muted); font-style:italic; }
+
+        @media (max-width:768px) {
+            .profile-header { flex-direction:column; align-items:center; text-align:center; padding:20px; }
+            .profile-meta { justify-content:center; }
+            .quick-actions { justify-content:center; }
+            .stats-row { grid-template-columns:repeat(2,1fr); }
+            .leads-grid { grid-template-columns:1fr; }
+        }
+        @media (max-width:640px) {
+            .stat-value { font-size:22px; }
+            .lead-details { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <button class="hamburger" onclick="toggleSidebar()" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar-nav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+    <div class="sidebar-overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
+
+    <aside class="sidebar" id="sidebar-nav" role="complementary" aria-label="Sidebar navigation">
+        <a href="index.html" class="sidebar-logo" aria-label="PropertyVista home">
+            <div class="sidebar-logo-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M3 21V9l9-7 9 7v12h-6v-6h-6v6H3z"/></svg>
+            </div>
+            <span class="sidebar-logo-text">PropertyVista</span>
+        </a>
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a href="index.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                Overview
+            </a>
+            <a href="buy.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                Buy Leads
+            </a>
+            <a href="rent.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                Rent Leads
+            </a>
+            <a href="sell.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8M8 8l8 8"/></svg>
+                Sell Leads
+            </a>
+        </nav>
+        <div class="sidebar-footer">PropertyVista &copy; 2026</div>
+    </aside>
+
+    <main class="main" id="main-content" role="main">
+        <div class="page-header">
+            <a href="javascript:history.back()" class="back-btn" aria-label="Go back to previous page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back
+            </a>
+            <h1 id="page-title">User Profile</h1>
+        </div>
+        <div class="container" id="main-content">
+            <div class="loading-state" id="loading" role="status" aria-label="Loading profile">
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Loading profile...</p>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <strong>PropertyVista</strong> — User Profile &bull; Data synced from Supabase
+        </footer>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            const btn = document.querySelector('.hamburger');
+            const isOpen = sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+            btn.setAttribute('aria-expanded', isOpen);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        function safeStr(v) { return v !== null && v !== undefined && v !== 'null' && v !== 'undefined' && String(v).trim() !== '' ? String(v).trim() : null; }
+        function displayVal(v) { return safeStr(v) || '--'; }
+
+        const SUPABASE_URL = 'https://opraetrifhesccgomcop.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9wcmFldHJpZmhlc2NjZ29tY29wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTgwNTI3MCwiZXhwIjoyMDkxMzgxMjcwfQ.ALNorAJpZxikyiHmhqbDEhmDzQsCz2VZrT9gQ8i-keQ';
+
+        const _supabase = (window.supabase && window.supabase.createClient) ? window.supabase : (typeof supabase !== 'undefined' ? supabase : null);
+        if (!_supabase) { document.body.innerHTML = '<div class="loading-state" role="alert"><p style="color:var(--danger)">Error: Supabase JS library failed to load. Please refresh the page.</p></div>'; throw new Error('No supabase'); }
+        const db = _supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const params = new URLSearchParams(window.location.search);
+        const phone = params.get('phone');
+
+        function formatDate(d) {
+            if (!d) return '--';
+            return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+        }
+
+        function renderAll(rentData, buyData, sellData) {
+            const all = [...rentData, ...buyData, ...sellData];
+            const container = document.getElementById('main-content');
+
+            if (all.length === 0) {
+                document.getElementById('page-title').textContent = 'User Profile';
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p>No records found for this phone number.</p>
+                    </div>`;
+                return;
+            }
+
+            const first = all[0];
+            const name = first.name || 'Unknown';
+            document.getElementById('page-title').textContent = name;
+
+            const locations = [...new Set(all.map(d => displayVal(d.location)).filter(v => v !== '--'))];
+            const firstSeen = all.map(d => d.created_at).filter(Boolean).sort()[0];
+            const lastSeen = all.map(d => d.created_at).filter(Boolean).sort().pop();
+
+            let badges = '';
+            if (rentData.length > 0) badges += `<span class="badge badge-rent"><span class="badge-dot"></span>Rent (${rentData.length})</span>`;
+            if (buyData.length > 0) badges += `<span class="badge badge-buy"><span class="badge-dot"></span>Buy (${buyData.length})</span>`;
+            if (sellData.length > 0) badges += `<span class="badge badge-sell"><span class="badge-dot"></span>Sell (${sellData.length})</span>`;
+
+            container.innerHTML = `
+                <div class="profile-header">
+                    <div class="profile-avatar" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-name">${name}</div>
+                        <div class="profile-phone-row">
+                            <span class="profile-phone">${phone}</span>
+                            ${badges}
+                        </div>
+                        <div class="profile-meta">
+                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${locations.length > 0 ? locations.join(', ') : 'Unknown'}</span>
+                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>First seen: ${formatDate(firstSeen)}</span>
+                            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Last active: ${formatDate(lastSeen)}</span>
+                        </div>
+                        <div class="quick-actions">
+                            <a href="tel:${phone}" class="action-btn primary" aria-label="Call ${phone}">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                                Call
+                            </a>
+                            <a href="https://wa.me/${phone.replace(/[^0-9]/g,'')}" target="_blank" rel="noopener noreferrer" class="action-btn success" aria-label="Open WhatsApp chat with ${phone}">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                WhatsApp
+                            </a>
+                            <button class="action-btn outline" onclick="copyPhone()" aria-label="Copy phone number to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                Copy Number
+                            </button>
+                            <button class="action-btn outline" onclick="copyAllDetails()" aria-label="Copy all lead details to clipboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                Copy All Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-value" aria-label="Total inquiries: ${all.length}">${all.length}</div>
+                        <div class="stat-label">Total Inquiries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="color:var(--rent)" aria-label="Rent leads: ${rentData.length}">${rentData.length}</div>
+                        <div class="stat-label">Rent Leads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="color:var(--buy)" aria-label="Buy leads: ${buyData.length}">${buyData.length}</div>
+                        <div class="stat-label">Buy Leads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="color:var(--sell)" aria-label="Sell leads: ${sellData.length}">${sellData.length}</div>
+                        <div class="stat-label">Sell Leads</div>
+                    </div>
+                </div>
+
+                <div id="rent-section"></div>
+                <div id="buy-section"></div>
+                <div id="sell-section"></div>
+            `;
+
+            renderLeadCards('Rent Inquiries', 'rent', rentData, 'rent-section');
+            renderLeadCards('Buy Inquiries', 'buy', buyData, 'buy-section');
+            renderLeadCards('Sell Inquiries', 'sell', sellData, 'sell-section');
+        }
+
+        function renderLeadCards(title, type, data, sectionId) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+
+            if (data.length === 0) {
+                section.innerHTML = `
+                    <div class="section-header">
+                        <h2 class="section-title">${title}</h2>
+                        <div class="section-line" aria-hidden="true"></div>
+                    </div>
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p>No ${type} leads found for this user.</p>
+                    </div>`;
+                return;
+            }
+
+            let html = `
+                <div class="section-header">
+                    <h2 class="section-title">${title}</h2>
+                    <span class="badge badge-${type}"><span class="badge-dot"></span>${data.length} record${data.length>1?'s':''}</span>
+                    <div class="section-line" aria-hidden="true"></div>
+                </div>
+                <div class="leads-grid">`;
+
+            data.forEach(d => {
+                const statusClass = d.status === 'HOT LEAD' ? 'hot' : d.status === 'WARM LEAD' ? 'warm' : 'cold';
+                html += `
+                    <div class="lead-card">
+                        <div class="lead-card-header">
+                            <span class="lead-type-badge ${type}">
+                                <span class="badge-dot" style="background:currentColor" aria-hidden="true"></span>
+                                ${type.toUpperCase()} LEAD
+                            </span>
+                            <span class="badge badge-${statusClass}"><span class="badge-dot"></span>${displayVal(d.status)}</span>
+                        </div>
+                        <div class="lead-details">`;
+
+                const commonFields = [
+                    { label: 'Location', value: d.location },
+                    { label: 'Budget', value: d.budget },
+                    { label: 'Timeline', value: d.timeline }
+                ];
+
+                const typeFields = {
+                    buy: [
+                        { label: 'Property Type', value: d.property_type },
+                        { label: 'Loan Required', value: d.loan }
+                    ],
+                    rent: [
+                        { label: 'Furnishing', value: d.furnished },
+                        { label: 'Source', value: d.source }
+                    ],
+                    sell: [
+                        { label: 'Property Type', value: d.property_type },
+                        { label: 'Property Status', value: d.property_status }
+                    ]
+                };
+
+                const allFields = [...commonFields, ...(typeFields[type] || []), { label: 'Created', value: formatDate(d.created_at), mono: true }];
+
+                allFields.forEach(f => {
+                    const isEmpty = !safeStr(f.value);
+                    html += `
+                        <div class="detail-item">
+                            <div class="detail-label">${f.label}</div>
+                            <div class="detail-value${f.mono ? ' mono' : ''}${isEmpty ? ' empty' : ''}">${displayVal(f.value)}</div>
+                        </div>`;
+                });
+
+                html += `</div></div>`;
+            });
+
+            html += '</div>';
+            section.innerHTML = html;
+        }
+
+        function copyPhone() {
+            navigator.clipboard.writeText(phone).then(() => showToast('Phone number copied!'));
+        }
+
+        function copyAllDetails() {
+            const cards = document.querySelectorAll('.lead-card');
+            const name = document.querySelector('.profile-name')?.textContent || 'Unknown';
+            const lines = [`Name: ${name}`, `Phone: ${phone}`, ''];
+
+            cards.forEach(card => {
+                const type = card.querySelector('.lead-type-badge')?.textContent.trim() || '';
+                const status = card.querySelector('.badge:last-child')?.textContent.trim() || '';
+                lines.push(`--- ${type} (${status}) ---`);
+                card.querySelectorAll('.detail-item').forEach(item => {
+                    const label = item.querySelector('.detail-label')?.textContent || '';
+                    const value = item.querySelector('.detail-value')?.textContent || '';
+                    lines.push(`${label}: ${value}`);
+                });
+                lines.push('');
+            });
+
+            navigator.clipboard.writeText(lines.join('\n')).then(() => showToast('All details copied!'));
+        }
+
+        async function init() {
+            if (!phone) {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p>No phone number provided. Go back and click a user name.</p>
+                    </div>`;
+                return;
+            }
+
+            try {
+                const [rentRes, buyRes, sellRes] = await Promise.all([
+                    db.from('rent').select('*').eq('user_phone', phone),
+                    db.from('Buy').select('*').eq('user_phone', phone),
+                    db.from('sell').select('*').eq('user_phone', phone)
+                ]);
+
+                const rentData = (rentRes.data || []).map(r => ({
+                    name: r.name || 'Unknown',
+                    location: r.Locality || '--',
+                    budget: r.Budget || '--',
+                    timeline: r.Timeline || '--',
+                    furnished: r["furnished or non furnished"] || '--',
+                    source: r.form_whom || '--',
+                    status: r.lead_type || '--',
+                    phone: r.user_phone || '--',
+                    created_at: r.created_at
+                }));
+
+                const buyData = (buyRes.data || []).map(b => ({
+                    name: b.name || 'Unknown',
+                    location: b.Location || '--',
+                    budget: b.Budget || '--',
+                    property_type: b.Property_type || '--',
+                    timeline: b.Timeline || '--',
+                    loan: b.Loan_requirement || '--',
+                    status: b.lead_type || '--',
+                    phone: b.user_phone || '--',
+                    created_at: b.created_at
+                }));
+
+                const sellData = (sellRes.data || []).map(s => ({
+                    name: s.name || 'Unknown',
+                    location: s.Location || '--',
+                    property_type: s.property_type || '--',
+                    budget: s.expected_price || '--',
+                    property_status: s.propety_status || '--',
+                    timeline: s.timeline || '--',
+                    status: s.lead_type || '--',
+                    phone: s.user_phone || '--',
+                    created_at: s.created_at
+                }));
+
+                renderAll(rentData, buyData, sellData);
+
+            } catch (e) {
+                console.error('Profile init error:', e);
+                document.getElementById('main-content').innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                        <p>Failed to load profile data. Please try again.</p>
+                    </div>`;
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
