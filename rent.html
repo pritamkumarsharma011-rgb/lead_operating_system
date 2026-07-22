@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="common.styles.css">
     <style>
         :root {
             --bg: #f8fafc;
@@ -125,8 +126,14 @@
         .badge-cold { background:var(--cold-bg); color:var(--cold); }
         .badge-cold .badge-dot { background:var(--cold); }
         .phone { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--text-secondary); background:var(--surface-hover); padding:3px 8px; border-radius:var(--radius-xs); }
-        a.user-link { color:var(--accent); text-decoration:none; font-weight:600; transition:opacity .15s ease; }
-        a.user-link:hover { opacity:0.7; }
+        a.user-link { color:var(--accent); text-decoration:none; font-weight:600; transition:all .2s ease; display:inline-flex; align-items:center; gap:5px; cursor:pointer; position:relative; padding:2px 6px; border-radius:var(--radius-xs); margin:-2px -6px; }
+        a.user-link::after { content:''; display:inline-block; width:13px; height:13px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E") center/contain no-repeat; opacity:0.4; transform:translateX(-3px); transition:all .2s ease; flex-shrink:0; }
+        a.user-link:hover { color:var(--accent-dark); background:var(--accent-bg); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px; }
+        a.user-link:hover::after { opacity:1; transform:translateX(0); }
+
+        .view-profile-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:var(--radius-xs); font-family:'Plus Jakarta Sans',sans-serif; font-size:10px; font-weight:600; border:1px solid var(--accent); background:var(--accent-bg); color:var(--accent); cursor:pointer; transition:all .2s ease; text-decoration:none; white-space:nowrap; }
+        .view-profile-btn svg { width:11px; height:11px; }
+        .view-profile-btn:hover { background:var(--accent); color:white; transform:translateY(-1px); box-shadow:var(--shadow-sm); }
         .empty-state { text-align:center; padding:60px 24px; color:var(--text-muted); }
 
         .footer { margin-top:48px; padding:24px; text-align:center; font-size:12px; color:var(--text-muted); border-top:1px solid var(--border); }
@@ -225,7 +232,8 @@
         .kanban-card:hover { box-shadow:var(--shadow-md); border-color:transparent; transform:translateY(-1px); }
         .kanban-card.dragging { opacity:0.5; }
         .kanban-card-name { font-size:13px; font-weight:600; margin-bottom:6px; }
-        .kanban-card-name a { color:var(--accent); text-decoration:none; }
+        .kanban-card-name a.user-link { font-size:13px; padding:1px 4px; margin:-1px -4px; }
+        .kanban-card-name a.user-link::after { width:11px; height:11px; }
         .kanban-card-meta { display:flex; flex-direction:column; gap:4px; }
         .kanban-card-meta span { font-size:11px; color:var(--text-muted); display:flex; align-items:center; gap:4px; }
         .kanban-card-meta svg { width:11px; height:11px; }
@@ -737,7 +745,7 @@
 
             tbody.innerHTML = data.map(d => {
                 const dt = d.created_at ? new Date(d.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) : '--';
-                return `<tr><td><a href="profile.html?phone=${encodeURIComponent(d.phone)}" class="user-link">${esc(d.name)}</a></td><td>${esc(d.location)}</td><td>${esc(d.budget)}</td><td>${esc(d.timeline)}</td><td>${esc(d.furnished)}</td><td>${esc(d.source)}</td><td><span class="badge ${getStatusBadgeClass(d.status)}"><span class="badge-dot"></span>${d.status}</span></td><td><span class="phone">${esc(d.phone)}</span></td><td>${dt}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><select style="padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-xs);font-size:11px;background:var(--bg);color:var(--text-primary);cursor:pointer;" onchange="changeStatus(${d.id},this.value)">${STATUSES.map(s => `<option value="${s.key}" ${s.key===(d.status||'NEW').toUpperCase()?'selected':''}>${s.label}</option>`).join('')}</select><button class="delete-btn" onclick="openDeleteModal(${d.id},'${esc(d.name)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></td></tr>`;
+                return `<tr><td><a href="profile.html?phone=${encodeURIComponent(d.phone)}" class="user-link">${esc(d.name)}</a></td><td>${esc(d.location)}</td><td>${esc(d.budget)}</td><td>${esc(d.timeline)}</td><td>${esc(d.furnished)}</td><td>${esc(d.source)}</td><td><span class="badge ${getStatusBadgeClass(d.status)}"><span class="badge-dot"></span>${d.status}</span></td><td><span class="phone">${esc(d.phone)}</span></td><td>${dt}</td><td><div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;"><a href="profile.html?phone=${encodeURIComponent(d.phone)}" class="view-profile-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View</a><select style="padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-xs);font-size:11px;background:var(--bg);color:var(--text-primary);cursor:pointer;" onchange="changeStatus(${d.id},this.value)">${STATUSES.map(s => `<option value="${s.key}" ${s.key===(d.status||'NEW').toUpperCase()?'selected':''}>${s.label}</option>`).join('')}</select><button class="delete-btn" onclick="openDeleteModal(${d.id},'${esc(d.name)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button></div></td></tr>`;
             }).join('');
         }
 
@@ -787,7 +795,7 @@
                 <div class="kanban-card status-${(d.status||'new').toLowerCase().replace(' ','')}"
                      draggable="true" ondragstart="handleDrag(event,${d.id})" data-id="${d.id}">
                     <div class="kanban-card-name">
-                        <a href="profile.html?phone=${encodeURIComponent(d.phone)}">${esc(d.name)}</a>
+                        <a href="profile.html?phone=${encodeURIComponent(d.phone)}" class="user-link">${esc(d.name)}</a>
                     </div>
                     <div class="kanban-card-meta">
                         <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${esc(d.location)}</span>

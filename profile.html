@@ -151,7 +151,11 @@
         <div class="sidebar-footer">PrimeNest Realty &copy; 2026</div>
     </aside>
 
-    <main class="main" id="main-content" role="main">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <svg id="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <svg id="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    </button>
+    <main class="main" role="main">
         <div class="page-header">
             <a href="javascript:history.back()" class="back-btn" aria-label="Go back to previous page">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -159,7 +163,7 @@
             </a>
             <h1 id="page-title">User Profile</h1>
         </div>
-        <div class="container" id="main-content">
+        <div class="container" id="profile-content">
             <div class="loading-state" id="loading" role="status" aria-label="Loading profile">
                 <div class="spinner" aria-hidden="true"></div>
                 <p>Loading profile...</p>
@@ -182,6 +186,21 @@
             overlay.classList.toggle('show');
             btn.setAttribute('aria-expanded', isOpen);
         }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('theme-icon-dark').style.display = isDark ? 'none' : 'block';
+            document.getElementById('theme-icon-light').style.display = isDark ? 'block' : 'none';
+        }
+        (function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark');
+                document.getElementById('theme-icon-dark').style.display = 'none';
+                document.getElementById('theme-icon-light').style.display = 'block';
+            }
+        })();
 
         function showToast(msg) {
             const t = document.getElementById('toast');
@@ -210,7 +229,7 @@
 
         function renderAll(rentData, buyData, sellData) {
             const all = [...rentData, ...buyData, ...sellData];
-            const container = document.getElementById('main-content');
+            const container = document.getElementById('profile-content');
 
             if (all.length === 0) {
                 document.getElementById('page-title').textContent = 'User Profile';
@@ -404,7 +423,7 @@
 
         async function init() {
             if (!phone) {
-                document.getElementById('main-content').innerHTML = `
+                document.getElementById('profile-content').innerHTML = `
                     <div class="empty-state">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
                         <p>No phone number provided. Go back and click a user name.</p>
@@ -459,7 +478,7 @@
 
             } catch (e) {
                 console.error('Profile init error:', e);
-                document.getElementById('main-content').innerHTML = `
+                document.getElementById('profile-content').innerHTML = `
                     <div class="empty-state">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
                         <p>Failed to load profile data. Please try again.</p>
