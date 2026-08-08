@@ -17,4 +17,4 @@ Unlike traditional chatbots, the system uses a state-machine architecture to ens
 
 
 ## Solution 
-This system will asks the relavent questions to the user according to the user's intent [Buy, Rent, Sell, Just Exploring] 
+We have 3 workflows to solve this problems (lead operating system, follow-up agent, lead qualification agent ) as i said this is not a any automation this is system i'll describe each workflow very detailed one by one 
