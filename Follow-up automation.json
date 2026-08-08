@@ -1,0 +1,988 @@
+{
+  "name": "Follow-up automation",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "Lo89cNUvFe2Pp6DC",
+          "mode": "list",
+          "cachedResultName": "user_tracking",
+          "cachedResultUrl": "/projects/VlLDy7MKSjBLy3Ro/datatables/Lo89cNUvFe2Pp6DC"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        -816,
+        432
+      ],
+      "id": "f5941a4d-f372-4ea3-b4c3-82b916aa5ed1",
+      "name": "Get row(s)",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Select rows from a table').item.json.intent }}",
+                    "rightValue": "Buy",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9dababd9-874e-438e-a888-ac6d5aff5c16"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "buy_"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e5bf692e-c9a9-4c23-96d9-831a72ff5eaa",
+                    "leftValue": "={{ $('Select rows from a table').item.json.intent }}",
+                    "rightValue": "Rent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "rent_"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "96aa5613-4c4a-4161-88b4-36d950752ea2",
+                    "leftValue": "={{ $('Select rows from a table').item.json.intent }}",
+                    "rightValue": "Sell",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Sell_"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        752,
+        -320
+      ],
+      "id": "6be94a53-06fd-4eb0-bf09-830172fe711b",
+      "name": "Switch3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3d7585bd-3bc1-42b6-b877-1348005e0068",
+              "leftValue": "={{ $json.user_phone }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "2aadd46d-000d-47a9-a7ae-68114d15ea33",
+              "leftValue": "={{ $json.intent }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -368,
+        -256
+      ],
+      "id": "a4ca98d9-38be-4416-b69d-9b84e9aa1abe",
+      "name": "checking_user_exist?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "363050b3-d3cb-4a1c-aaa4-033de09bbae1",
+              "leftValue": "={{ $json.current_step_index }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        -256
+      ],
+      "id": "94a4310a-15a6-4d71-b092-97e6a8c39b4a",
+      "name": "checking_step_index"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "80ee60cd-ba91-43ef-98eb-4c0d2b313076",
+              "name": "TIme_tracking",
+              "value": "={{ $json.Time_tracking }}",
+              "type": "string"
+            },
+            {
+              "id": "f385e8a5-fbc5-4778-af56-da1bb195daf9",
+              "name": "last_Time",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -256
+      ],
+      "id": "77f63a7a-9ae6-4685-87b0-a181ab0f78d7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0e4698a1-dff1-40f4-949e-7a03ad68b7b1",
+              "leftValue": "={{ $json.isTimeExceeded }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "6ffa1c6c-037a-4282-aec9-38f5e967e654",
+              "leftValue": "={{ $('Select rows from a table').item.json.max_followup }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        -160
+      ],
+      "id": "51d78fe2-71cc-4617-ab2d-02ac913ab5c4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "tUMQ4BYoumzFLIed",
+          "mode": "list",
+          "cachedResultName": "data table user_buy_J5EhppwY1wE6219z",
+          "cachedResultUrl": "/projects/nryv8HapgnSKOZc4/datatables/tUMQ4BYoumzFLIed"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Select rows from a table').item.json.current_step_index }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        -400
+      ],
+      "id": "0dd59f31-f233-4a87-8e6c-6f9d9fea2599",
+      "name": "Extracting_next_que"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "JsmjWA1NtihBX6Kg",
+          "mode": "list",
+          "cachedResultName": "data table user_rent_Yk3rj1AuRkv3qAOK",
+          "cachedResultUrl": "/projects/nryv8HapgnSKOZc4/datatables/JsmjWA1NtihBX6Kg"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Select rows from a table').item.json.current_step_index }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        992,
+        -176
+      ],
+      "id": "340856c3-99d4-4b25-b871-31e62d88a724",
+      "name": "Extracting_next_que1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "jqLVZattgUwrmuCQ",
+          "mode": "list",
+          "cachedResultName": "data table user_sell_9RlemMLCO4M7x1Er",
+          "cachedResultUrl": "/projects/nryv8HapgnSKOZc4/datatables/jqLVZattgUwrmuCQ"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Select rows from a table').item.json.current_step_index }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        -16
+      ],
+      "id": "ebf75e98-418a-4c6f-be44-af7ea03d8893",
+      "name": "Extracting_next_que2"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -816,
+        -256
+      ],
+      "id": "4ad89efb-3e78-4efd-9e95-2cbfae25d4ca",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v25.0/1302886072904493/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer EAAdeOKg0FEwBR0d4sCaxfGtGbQLZAZCu5JgxaEEZA3a978RUDFZAKLtBVMEqpUtLoPySLZCbpnJ09hkZCz9KcEgZAOS2Ep7PIvZA15FVNZAr4vC6MZApEFY1MjP3mOMpq8Tt8RMCiWt3fBJYDKM4MAvpZCYdFCEeRDYXV5WxZCj6ZA43rtJLAFEhW1tv3RHnQtCJ7rvnZC8QZDZD"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"917834964324\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"button\",\n    \"header\": {\n      \"type\": \"text\",\n      \"text\": \"PrimeNest Realty\"\n    },\n    \"body\": {\n      \"text\": \"Hey! {{ $('Get row(s)').item.json.user_name }} We saved your progress, so there's no need to start over/n let's continue from where you left off/n\n\nYour Next Question/n {{ $json.questions }}\n\"\n    },\n    \"footer\": {\n      \"text\": \"AI Powered Lead Operating System\"\n    },\n    \"action\": {\n      \"buttons\": [\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"buy_property\",\n            \"title\": \"Buy\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"rent_property\",\n            \"title\": \"Rent\"\n          }\n        },\n        {\n          \"type\": \"reply\",\n          \"reply\": {\n            \"id\": \"sell_property\",\n            \"title\": \"Sell\"\n          }\n        }\n      ]\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -816,
+        208
+      ],
+      "id": "1fd5a838-c4c4-47e0-89ce-009025025a24",
+      "name": "HTTP Request2",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "O3rFlTbC5nuGGrq6",
+          "name": "WhatsApp account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nreturn [\n  {\n    json: data\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        -240
+      ],
+      "id": "a46ef979-36b0-4003-abca-d3e5e0715b04",
+      "name": "Extracted_Q"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v25.0/1232363759957681/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "whatsAppApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "EAAdeOKg0FEwBRyLVCYvX7InZCeGZBwMAK4FGFeK3WnnHT2ZB6h6bSmlxdwPwdZAZCff6dl3lcvpMIEC4ZBedwwHccH58medxcDPJ4kj9gAU4Cy21F2HTuCwwy0qocH0edEGZCZAYWbPanh3ZCNsM0itRiJQ59ZBt1KzfNDpBiCojvZAmfPAdzTUAo0EZAtwZAOkEFdg2Maz5HiNwvA3EN6l95kYzr5ZA2lCAw7cWnsMUi146MhZAFe9kjfndbcTAep5geQICpZA0VMBiGpDkqXfL7zYqcPcGgmJj"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messaging_product\": \"whatsapp\",\n  \"recipient_type\": \"individual\",\n  \"to\": \"{{ $('Select rows from a table').item.json.user_phone }}\",\n  \"type\": \"interactive\",\n  \"interactive\": {\n    \"type\": \"list\",\n    \"header\": {\n      \"type\": \"text\",\n      \"text\": \"🏡 PrimeNest Realty\"\n    },\n    \"body\": {\n      \"text\": \"Hey! {{ $('Select rows from a table').item.json.user_name }} 👋\\n\\nWe saved your progress, so there's no need to start over.\\n\\nLet's continue from where we left off.\\n\\nHere is your next question:\\n\\n{{ $json.questions }}\"\n    },\n    \"footer\": {\n      \"text\": \"Select one option below\"\n    },\n    \"action\": {\n      \"button\": \"Choose Options\",\n      \"sections\": [\n        {\n          \"title\": \"Available Options\",\n          \"rows\": [\n            {\n              \"id\": \"gurgaon\",\n              \"title\": \"{{ $json.Button1 }}\"\n            },\n            {\n              \"id\": \"delhi\",\n              \"title\": \"{{ $json.Button2 }}\",\n              \"description\": \"Properties\"\n            },\n            {\n              \"id\": \"noida\",\n              \"title\": \"{{ $json.Button3 }}\",\n              \"description\": \"Properties\"\n            },\n            {\n              \"id\": \"mumbai\",\n              \"title\": \"{{ $json.Button4 }}\",\n              \"description\": \"Properties\"\n            },\n            {\n              \"id\": \"restart\",\n              \"title\": \"🔄 Restart\",\n              \"description\": \"Start the conversation again\"\n            },\n            {\n              \"id\": \"escalation\",\n              \"title\": \"👨‍💼 Escalate\",\n              \"description\": \"Talk to a human\"\n            }\n          ]\n        }\n      ]\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1424,
+        -240
+      ],
+      "id": "9ad7f78d-42ae-42a9-9aa5-fc9d008353b4",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "W81Wzo2U8lyO3fSV",
+          "name": "Unnamed credential 2"
+        },
+        "whatsAppApi": {
+          "id": "O3rFlTbC5nuGGrq6",
+          "name": "WhatsApp account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// NOTE: field names exactly waise hi use karo jo output me dikh rahe hain\nconst lastTimeStr = item.TIme_tracking;   // yahan T I m e capital T, capital I hai\nconst currentTimeStr = item.last_Time;\n\nif (!lastTimeStr || !currentTimeStr) {\n  return [{\n    json: {\n      ...item,\n      diffMin: null,\n      isTimeExceeded: false,\n      error: 'Missing time fields'\n    }\n  }];\n}\n\nconst lastTime = new Date(lastTimeStr);\nconst now = new Date(currentTimeStr);\n\n// safety: invalid date check\nif (isNaN(lastTime.getTime()) || isNaN(now.getTime())) {\n  return [{\n    json: {\n      ...item,\n      diffMin: null,\n      isTimeExceeded: false,\n      error: 'Invalid date parse'\n    }\n  }];\n}\n\nconst diffMs = now - lastTime;\nconst diffMin = Math.floor(diffMs / 60000);\n\n// testing ke liye 5 min, production me 30\nconst isTimeExceeded = diffMin > 3;\n\nreturn [{\n  json: {\n    ...item,\n    diffMin,\n    isTimeExceeded\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        320,
+        -160
+      ],
+      "id": "01603b5d-8ddc-4244-901f-264a2d13e993",
+      "name": "Time_tracker"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_tracking",
+          "mode": "list",
+          "cachedResultName": "user_tracking"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -592,
+        -256
+      ],
+      "id": "51492b33-a841-4876-a262-ab5a47e9f4a6",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "DaYIoyC2AzDlXs4X",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "user_tracking",
+          "mode": "list",
+          "cachedResultName": "user_tracking"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Select rows from a table').item.json.id }}",
+            "max_followup": "={{ $('Select rows from a table').item.json.max_followup +1}}",
+            "Time_tracking": "={{ new Date().toISOString() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "createdAt",
+              "displayName": "createdAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "updatedAt",
+              "displayName": "updatedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_phone",
+              "displayName": "user_phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget",
+              "displayName": "Budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property_type",
+              "displayName": "Property_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline",
+              "displayName": "Timeline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "retry_count",
+              "displayName": "retry_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "current_step_index",
+              "displayName": "current_step_index",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Loan_requirement",
+              "displayName": "Loan_requirement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "support_message",
+              "displayName": "support_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "intent",
+              "displayName": "intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Locality_rent",
+              "displayName": "Locality_rent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Budget_rent",
+              "displayName": "Budget_rent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline_rent",
+              "displayName": "Timeline_rent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Furnished_non_furnished_rent",
+              "displayName": "Furnished_non_furnished_rent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "For_whom_rent",
+              "displayName": "For_whom_rent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property_location_sell",
+              "displayName": "Property_location_sell",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property_type_sell",
+              "displayName": "Property_type_sell",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Expected_price_sell",
+              "displayName": "Expected_price_sell",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Property_status_sell",
+              "displayName": "Property_status_sell",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timeline_sell",
+              "displayName": "Timeline_sell",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appended",
+              "displayName": "appended",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Time_tracking",
+              "displayName": "Time_tracking",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_name",
+              "displayName": "user_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "max_followup",
+              "displayName": "max_followup",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1728,
+        -240
+      ],
+      "id": "ec157f70-ee31-432b-aa4a-d07375177b21",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "DaYIoyC2AzDlXs4X",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get row(s)": {
+      "main": [
+        []
+      ]
+    },
+    "Switch3": {
+      "main": [
+        [
+          {
+            "node": "Extracting_next_que",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extracting_next_que1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extracting_next_que2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checking_user_exist?": {
+      "main": [
+        [
+          {
+            "node": "checking_step_index",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "checking_step_index": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Time_tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracting_next_que": {
+      "main": [
+        [
+          {
+            "node": "Extracted_Q",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Time_tracker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracting_next_que1": {
+      "main": [
+        [
+          {
+            "node": "Extracted_Q",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracting_next_que2": {
+      "main": [
+        [
+          {
+            "node": "Extracted_Q",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        []
+      ]
+    },
+    "Extracted_Q": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Time_tracker": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "checking_user_exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "fa7e8222-a955-48f2-b213-014f4582cd03",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9d4b6d3852dd93b32b28fa18bb988475c68796df8d93b7a76eba3a4c994e8ef2"
+  },
+  "nodeGroups": [],
+  "id": "LabMwzsBC0jjLfjD",
+  "tags": []
+}
