@@ -11,5 +11,10 @@ Unlike traditional chatbots, the system uses a state-machine architecture to ens
 ## Problem Statement
 - The Problem is so real, most of the Real estate agencies or real estate brokers looses their lead because of the late replies
 - manual follow-ups 
-- A lead who just exploring it's waste the time of the sales agent. this is the very irritating problem, you thought he can be our lead but he just exploring.
-- And this all process is manual and sometimes irritating, right. and the solution is my #lead operating system
+- A lead who just exploring will waste the time of the sales agent. this is the very irritating problem, you thought he can be our lead but he's just exploring.
+- and manually updating CRM
+- And this all process is manual and sometimes irritating, right. and the solution is my **lead operating system**
+
+
+## Solution 
+This system will asks the relavent questions to the user according to the user's intent [Buy, Rent, Sell, Just Exploring] 
