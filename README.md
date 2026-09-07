@@ -344,8 +344,6 @@ This provides better control over the lead journey and makes it easier for an ag
 ## Tool stack
 - Meta cloud api for (WhatsApp automation)
 - n8n (orchestration)
-- supabase (Database postgreSQL) - while backend FSM(finite state machine)
+- supabase (Database postgreSQL) - whole backend FSM(finite state machine)
 - replit (for front end dashboard)
-- 
-- 
-- -
+
