@@ -19,7 +19,7 @@ Unlike traditional chatbots, the system uses a state-machine architecture to ens
 ## Solution 
 We have 3 workflows to solve this problems (lead operating system, follow-up agent, lead qualification agent ) as i said this is not a any automation this is system that can be reused as per requirement and the client also can change questions and options with ease. i'll describe each workflow very detailed one by one 
 
-How the System Works
+## How the System Works
 
 The system is divided into three main workflows:
 
@@ -31,7 +31,7 @@ Each workflow has a specific responsibility, while the database acts as the sour
 
 ---
 
-1. Lead Operating System
+## 1. Lead Operating System
 
 The Lead Operating System is the main workflow responsible for handling incoming real-estate leads.
 
@@ -87,7 +87,7 @@ The system therefore behaves more like a state-driven lead workflow rather than 
 
 ---
 
-2. Lead Qualification Agent
+## 2. Lead Qualification Agent
 
 The Lead Qualification Agent collects the information required to determine the quality of a lead.
 
@@ -115,7 +115,7 @@ This allows the sales team to prioritize leads instead of manually checking ever
 
 ---
 
-3. Follow-Up Automation
+## 3. Follow-Up Automation
 
 One of the major problems in real-estate sales is that leads often require multiple follow-ups.
 
@@ -155,7 +155,7 @@ The follow-up timing can be configured according to the business requirement.
 
 ---
 
-4. Persistent Lead Memory
+## 4. Persistent Lead Memory
 
 The system maintains information about individual leads instead of treating every conversation as a completely new interaction.
 
@@ -178,7 +178,7 @@ This makes it possible to continue a lead journey instead of restarting the qual
 
 ---
 
-5. Restart & Escalation
+## 5. Restart & Escalation
 
 The system also handles situations where the conversation needs to change direction.
 
@@ -206,7 +206,7 @@ This prevents the automation from forcing every situation through the same flow.
 
 ---
 
-6. WhatsApp Integration
+## 6. WhatsApp Integration
 
 The system is connected to WhatsApp through the Meta API.
 
@@ -241,7 +241,7 @@ The options are retrieved from the configured data rather than being permanently
 
 ---
 
-7. Custom Lead Dashboard
+## 7. Custom Lead Dashboard
 
 The system includes a custom dashboard for managing the collected lead information.
 
@@ -279,40 +279,35 @@ The profile can also provide quick actions such as:
 
 ---
 
-8. End-to-End Architecture
+## 8. End-to-End Architecture
 
 The complete system works approximately like this:
 
-                    ┌─────────────────┐
-                    │     WhatsApp    │
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │    Meta API     │
-                    └────────┬────────┘
-                             │
-                             ▼
-              ┌──────────────────────────┐
-              │  Lead Operating System   │
-              └────────────┬─────────────┘
+                   
+                         WhatsApp 
+                   
+                  
+                     Meta API  
+                             
+          
+              Lead Operating System   
+        
                            │
-             ┌─────────────┼─────────────┐
-             ▼             ▼             ▼
+             
+                                 
        Qualification   Follow-Up      Lead State
-             │             │             │
-             └─────────────┼─────────────┘
-                           ▼
-                    ┌──────────────┐
-                    │   Database   │
-                    └──────┬───────┘
+   
+         
+                           
+                  
+                   Database   
+                    
                            │
-                           ▼
-                    ┌──────────────┐
-                    │  Dashboard   │
-                    └──────────────┘
+                           
+                  
+                     Dashboard   
+                   
 
----
 
 Key Features
 
@@ -410,8 +405,6 @@ Follow-Up
         ↓
 Dashboard
 
----
-
 Future Improvements
 
 Potential future improvements include:
@@ -426,18 +419,7 @@ Potential future improvements include:
 - Advanced lead scoring
 - Production load testing
 
----
 
-Security Note
 
-This repository should never contain production credentials, API keys, database passwords, Meta access tokens, webhook secrets, or encryption keys.
-
-Use environment variables or a secure secrets-management system for sensitive configuration.
-
----
-
-Status
-
-Project Status: Working Prototype / Demonstration
 
 The system has been built to demonstrate an end-to-end automated lead-management workflow for real-estate agencies, including lead qualification, follow-ups, persistent lead information, escalation, and dashboard management.
