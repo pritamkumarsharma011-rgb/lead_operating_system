@@ -341,32 +341,5 @@ The automation then uses that information to maintain a predictable qualificatio
 
 This provides better control over the lead journey and makes it easier for an agency to modify its qualification requirements without rebuilding the entire system.
 
----
-
-Example Lead Journey
-
-New Lead
-   ↓
-WhatsApp Conversation
-   ↓
-Select Intent
-   ↓
-Buy / Rent / Sell
-   ↓
-Location
-   ↓
-Budget
-   ↓
-Timeline
-   ↓
-Lead Qualification
-   ↓
-Hot / Warm / Cold
-   ↓
-Lead Stored
-   ↓
-Dashboard Updated
-   ↓
-Follow-Up if Required
-   ↓
-Human Sales Team
+## Tool stack
+- 
