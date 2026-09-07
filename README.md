@@ -342,4 +342,10 @@ The automation then uses that information to maintain a predictable qualificatio
 This provides better control over the lead journey and makes it easier for an agency to modify its qualification requirements without rebuilding the entire system.
 
 ## Tool stack
+- Meta cloud api for (WhatsApp automation)
+- n8n (orchestration)
+- supabase (Database postgreSQL) - while backend FSM(finite state machine)
+- replit (for front end dashboard)
 - 
+- 
+- -
