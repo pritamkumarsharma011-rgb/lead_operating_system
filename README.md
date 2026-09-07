@@ -329,7 +329,7 @@ Key Features
 
 ---
 
-Why This Approach?
+## Why This Approach?
 
 Traditional chatbot systems often rely heavily on AI-generated responses.
 
